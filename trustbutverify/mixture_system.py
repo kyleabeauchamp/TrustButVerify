@@ -118,7 +118,7 @@ class MixtureSystem(System):
         simulation.context.setVelocitiesToTemperature(self.temperature)
         print('Equilibrating.')
         
-        simulation.step(5000)
+        simulation.step(10000)
         
         simulation.context.setVelocitiesToTemperature(self.temperature)
         integrator.setStepSize(self.equil_timestep)
