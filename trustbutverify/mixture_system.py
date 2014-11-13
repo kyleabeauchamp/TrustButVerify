@@ -106,7 +106,7 @@ class MixtureSystem(System):
         ff = self.ffxml
 
         system = ff.createSystem(topology, nonbondedMethod=app.PME, nonbondedCutoff=self.cutoff, constraints=app.HBonds)
-        integrator = mm.LangevinIntegrator(self.temperature, self.equil_friction, self.equil_timestep)
+        integrator = mm.LangevinIntegrator(self.temperature, self.equil_friction, self.equil_timestep / 5.)
         system.addForce(mm.MonteCarloBarostat(self.pressure, self.temperature, self.barostat_frequency))
 
         simulation = app.Simulation(topology, system, integrator)
@@ -117,6 +117,11 @@ class MixtureSystem(System):
 
         simulation.context.setVelocitiesToTemperature(self.temperature)
         print('Equilibrating.')
+        
+        simulation.step(5000)
+        
+        simulation.context.setVelocitiesToTemperature(self.temperature)
+        integrator.setStepSize(self.equil_timestep)
 
         simulation.reporters.append(app.DCDReporter(self.equil_dcd_filename, self.equil_output_frequency))
         simulation.step(self.n_equil_steps)
